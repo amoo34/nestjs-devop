@@ -1,0 +1,62 @@
+# Example Deployment Workflow
+# Rename this file to deploy.yml and configure for your deployment target
+
+name: Deploy to Production
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  deploy:
+    name: Deploy Application
+    runs-on: ubuntu-latest
+    environment: production # Requires GitHub environment secrets
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Generate Prisma Client
+        run: npm run prisma:generate
+      
+      - name: Build application
+        run: npm run build
+      
+      - name: Run database migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: npx prisma migrate deploy
+      
+      # Example: Deploy to a server via SSH
+      # - name: Deploy to server
+      #   uses: appleboy/ssh-action@master
+      #   with:
+      #     host: ${{ secrets.HOST }}
+      #     username: ${{ secrets.USERNAME }}
+      #     key: ${{ secrets.SSH_KEY }}
+      #     script: |
+      #       cd /path/to/app
+      #       git pull
+      #       npm install
+      #       npm run build
+      #       pm2 restart app
+      
+      # Example: Deploy to Docker registry
+      # - name: Build Docker image
+      #   run: docker build -t myapp:${{ github.sha }} .
+      # 
+      # - name: Push to registry
+      #   run: docker push myapp:${{ github.sha }}
+
+
