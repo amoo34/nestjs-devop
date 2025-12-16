@@ -38,3 +38,11 @@ lerna-debug.log*
 .env
 .env.local
 .env.*.local
+
+# GCP Service Account Keys (NEVER commit these!)
+*.json
+!package.json
+!package-lock.json
+!tsconfig*.json
+!nest-cli.json
+!test/jest-e2e.json
