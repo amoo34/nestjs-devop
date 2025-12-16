@@ -111,7 +111,7 @@ jobs:
       - name: Run npm audit
         run: npm audit --audit-level=moderate
         continue-on-error: true
-
+  
   # Deploy to Google Cloud Run (only on main branch after CI passes)
   deploy:
     name: Deploy to Cloud Run
