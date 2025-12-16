@@ -207,6 +207,7 @@ jobs:
             --allow-unauthenticated \
             --port 8080 \
             --set-env-vars "PORT=8080,DATABASE_URL=$DATABASE_URL" \
+            --service-account github-actions-deploy@eng-plasma-481303-g9.iam.gserviceaccount.com \
             --memory 512Mi \
             --cpu 1 \
             --min-instances 0 \
