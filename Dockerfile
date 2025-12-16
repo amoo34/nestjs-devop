@@ -15,8 +15,12 @@ RUN npm ci
 # Generate Prisma Client
 RUN npx prisma generate
 
+# Copy TypeScript config files (needed for build)
+COPY tsconfig*.json ./
+COPY nest-cli.json ./
+
 # Copy source code
-COPY . .
+COPY src ./src
 
 # Build the application
 RUN npm run build

@@ -15,7 +15,6 @@ test
 .gitignore
 .eslintrc*
 .prettierrc*
-tsconfig*.json
 nest-cli.json
 
 
