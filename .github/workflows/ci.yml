@@ -139,10 +139,50 @@ jobs:
         with:
           project_id: ${{ vars.GCP_PROJECT_ID }}
       
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      - name: Create Service Account Key File from Secret
+        run: |
+          # Check if secret exists
+          if [ -z "$GCP_SA_KEY" ]; then
+            echo "❌ ERROR: GCP_SA_KEY secret is empty or not set!"
+            exit 1
+          fi
+          
+          # Write the secret to a file (using printf to handle special characters)
+          printf '%s\n' "$GCP_SA_KEY" > eng-plasma-481303-g9-93823deed054.json
+          chmod 600 eng-plasma-481303-g9-93823deed054.json
+          
+          # Verify the file was created and is valid JSON
+          if [ ! -f eng-plasma-481303-g9-93823deed054.json ]; then
+            echo "❌ ERROR: File was not created!"
+            exit 1
+          fi
+          
+          # Check if it's valid JSON
+          if ! python3 -m json.tool eng-plasma-481303-g9-93823deed054.json > /dev/null 2>&1; then
+            echo "❌ ERROR: File is not valid JSON!"
+            echo "First 200 characters of file:"
+            head -c 200 eng-plasma-481303-g9-93823deed054.json
+            exit 1
+          fi
+          
+          echo "✅ Service account key file created: eng-plasma-481303-g9-93823deed054.json"
+          echo "File size: $(wc -c < eng-plasma-481303-g9-93823deed054.json) bytes"
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+      
+      - name: Authenticate to Google Cloud using Service Account File
+        run: |
+          gcloud auth activate-service-account --key-file=eng-plasma-481303-g9-93823deed054.json
+          gcloud config set project ${{ vars.GCP_PROJECT_ID }}
+          echo "✅ Authenticated to GCP using eng-plasma-481303-g9-93823deed054.json"
+      
+      - name: Create Artifact Registry Repository (if not exists)
+        run: |
+          gcloud artifacts repositories create $SERVICE \
+            --repository-format=docker \
+            --location=$GAR_LOCATION \
+            --description="Docker repository for $SERVICE" \
+            || echo "Repository already exists or creation failed"
       
       - name: Configure Docker for GCR
         run: |
