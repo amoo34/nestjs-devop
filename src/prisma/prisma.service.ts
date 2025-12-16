@@ -7,16 +7,9 @@ export class PrismaService
   implements OnModuleInit, OnModuleDestroy
 {
   async onModuleInit() {
-    try {
-      console.log('Connecting to database...');
-      await this.$connect();
-      console.log('✅ Database connected successfully');
-    } catch (error) {
-      console.error('❌ Failed to connect to database:', error);
-      console.warn('⚠️ App will continue to start. Database connection will be retried on first query.');
-      // Don't throw - let the app start even if DB connection fails
-      // Prisma will retry the connection on the first query
-    }
+    // Don't connect on startup - let Prisma connect lazily on first query
+    // This allows the app to start faster and pass Cloud Run's health check
+    console.log('PrismaService initialized. Database will connect on first query.');
   }
 
   async onModuleDestroy() {
