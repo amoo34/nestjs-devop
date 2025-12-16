@@ -120,11 +120,11 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
     env:
-      PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+      PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
       GAR_LOCATION: us-central1
       SERVICE: nest-test-devop
       REGION: us-central1
-      DATABASE_URL: ${{ secrets.SUPABASE_DATABASE_URL }}
+      DATABASE_URL: ${{ vars.DATABASE_URL }}
 
     permissions:
       contents: read
@@ -137,7 +137,7 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          project_id: ${{ vars.GCP_PROJECT_ID }}
       
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2

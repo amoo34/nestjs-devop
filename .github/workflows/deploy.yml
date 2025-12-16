@@ -6,12 +6,12 @@ on:
   workflow_dispatch: # Allows manual triggering
 
 env:
-  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
   GAR_LOCATION: us-central1 # Change to your preferred region
   SERVICE: nest-test-devop
   REGION: us-central1 # Change to your preferred region
-  # Supabase Postgres connection string
-  DATABASE_URL: ${{ secrets.SUPABASE_DATABASE_URL }}
+  # Supabase Postgres connection string (using variable instead of secret)
+  DATABASE_URL: ${{ vars.DATABASE_URL }}
 
 jobs:
   deploy:
@@ -31,7 +31,7 @@ jobs:
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
         with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          project_id: ${{ vars.GCP_PROJECT_ID }}
       
       - name: Create Service Account Key File from Secret
         run: |
@@ -67,7 +67,7 @@ jobs:
       - name: Authenticate to Google Cloud using Service Account File
         run: |
           gcloud auth activate-service-account --key-file=eng-plasma-481303-g9-93823deed054.json
-          gcloud config set project ${{ secrets.GCP_PROJECT_ID }}
+          gcloud config set project ${{ vars.GCP_PROJECT_ID }}
           echo "✅ Authenticated to GCP using eng-plasma-481303-g9-93823deed054.json"
       
       - name: Configure Docker for GCR
