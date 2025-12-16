@@ -211,8 +211,7 @@ jobs:
             --cpu 1 \
             --min-instances 0 \
             --max-instances 10 \
-            --timeout 300 \
-            --max-instance-request-concurrency 80
+            --timeout 300
       
       - name: Get service URL
         id: get-url
