@@ -191,8 +191,7 @@ jobs:
             --min-instances 0 \
             --max-instances 10 \
             --timeout 300 \
-            --cpu-throttling \
-            --startup-cpu-boost
+            --cpu-boost
       
       - name: Get service URL
         id: get-url
