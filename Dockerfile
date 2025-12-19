@@ -34,12 +34,11 @@ COPY prisma ./prisma/
 # Install only production dependencies
 RUN npm ci --only=production
 
-# Generate Prisma Client
-RUN npx prisma generate
-
 # Copy built application from builder
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+
+# Prisma Client is already generated in builder stage, no need to regenerate
 
 # Expose port
 EXPOSE 8080
